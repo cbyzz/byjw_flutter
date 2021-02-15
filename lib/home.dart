@@ -17,27 +17,30 @@ class HomeState extends State<Home>{
 
   void jump(){
 
-    count = 0;
+    if(action){
 
-    setState(() {
-      axisY -= 0.2;
-      axisY = double.parse(axisY.toStringAsExponential(1));
-    });
+      count = 0;
 
-    if(!action){
-      action = true;
-      Timer.periodic(new Duration(milliseconds: 500), (timer) {
-        count += 0.5;
-        setState((){
-          axisY = (gravity * pow(count, 2)) / 2;
-          axisY = double.parse(axisY.toStringAsExponential(1)) > 1.0 ? 0.9 : double.parse(axisY.toStringAsExponential(1));
-          print(axisY);
-
-          if(axisY >= 1.0){
-            timer.cancel();
-          }
-        });
+      setState(() {
+        axisY -= 0.2;
+        axisY = double.parse(axisY.toStringAsExponential(1));
       });
+
+      if(!action){
+        action = true;
+        Timer.periodic(new Duration(milliseconds: 500), (timer) {
+          count += 0.5;
+          setState((){
+            axisY = (gravity * pow(count, 2)) / 2;
+            axisY = double.parse(axisY.toStringAsExponential(1)) > 1.0 ? 0.9 : double.parse(axisY.toStringAsExponential(1));
+            print(axisY);
+
+            if(axisY >= 1.0){
+              timer.cancel();
+            }
+          });
+        });
+      }
     }
   }
 
@@ -74,13 +77,29 @@ class HomeState extends State<Home>{
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('현재점수'),
                         Text(
-                          '2181212312123123123123123123123123123123123123123123312312',
-                          softWrap: true,
-                          )
+                          '현재점수',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top:20, right:30, left:30),
+                          child: Text(
+                            '21812123121231231점',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            ),
+                        )
                       ],
                     ),
+                  ),
+                 Container(
+                    width: 1,
+                    height: double.maxFinite,
+                    color: Colors.grey.withOpacity(0.3),
+                    margin: const EdgeInsets.symmetric(vertical: 70, horizontal: 0),
                   ),
                   Expanded(
                     flex:5,
@@ -88,8 +107,21 @@ class HomeState extends State<Home>{
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('최고점수'),
-                        Text('0')
+                        Text(
+                          '최고점수',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top:20, right:20, left:20),
+                          child: Text(
+                            '0점',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            ),
+                        )
                       ],
                     ),
                   )
