@@ -16,32 +16,30 @@ class HomeState extends State<Home>{
   bool action = false;
 
   void jump(){
+    count = 0;
 
-    if(action){
+    setState(() {
+      axisY -= 0.2;
+      axisY = double.parse(axisY.toStringAsExponential(1));
+    });
 
-      count = 0;
+    if(!action){
+      action = true;
+      Timer.periodic(new Duration(milliseconds: 1000), (timer) {
+        count += 0.1;
+        setState((){
+          axisY = double.parse((axisY + ((gravity * (count * count)))/2).toStringAsExponential(1));
 
-      setState(() {
-        axisY -= 0.2;
-        axisY = double.parse(axisY.toStringAsExponential(1));
-      });
-
-      if(!action){
-        action = true;
-        Timer.periodic(new Duration(milliseconds: 500), (timer) {
-          count += 0.5;
-          setState((){
-            axisY = (gravity * pow(count, 2)) / 2;
-            axisY = double.parse(axisY.toStringAsExponential(1)) > 1.0 ? 0.9 : double.parse(axisY.toStringAsExponential(1));
-            print(axisY);
-
-            if(axisY >= 1.0){
-              timer.cancel();
-            }
-          });
+          if(axisY >= 1.0){
+            timer.cancel();
+          }else{
+            action = false;
+          }
         });
-      }
+      });
     }
+
+
   }
 
   @override
