@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'naver-icon.dart';
 
@@ -11,23 +11,27 @@ class Home extends StatefulWidget{
 
 class HomeState extends State<Home>{
   double axisY = 0;
-  int count = 0;
+  double count = 0;
+  double gravity = 0.15;
   bool action = false;
 
   void jump(){
+
+    count = 0;
+
     setState(() {
-      axisY -= 0.1;
+      axisY -= 0.2;
       axisY = double.parse(axisY.toStringAsExponential(1));
-      count = 0;
     });
 
     if(!action){
       action = true;
       Timer.periodic(new Duration(milliseconds: 500), (timer) {
-        count += 1;
+        count += 0.5;
         setState((){
-          axisY += (0.1 * count);
-          axisY = double.parse(axisY.toStringAsExponential(1));
+          axisY = (gravity * pow(count, 2)) / 2;
+          axisY = double.parse(axisY.toStringAsExponential(1)) > 1.0 ? 0.9 : double.parse(axisY.toStringAsExponential(1));
+          print(axisY);
 
           if(axisY >= 1.0){
             timer.cancel();
@@ -64,24 +68,30 @@ class HomeState extends State<Home>{
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('현재점수'),
-                      Text(
-                        '2181212312312312',
-                        softWrap: true,
-                        )
-                    ],
+                  Expanded(
+                    flex:5,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('현재점수'),
+                        Text(
+                          '2181212312123123123123123123123123123123123123123123312312',
+                          softWrap: true,
+                          )
+                      ],
+                    ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('최고점수'),
-                      Text('0')
-                    ],
+                  Expanded(
+                    flex:5,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('최고점수'),
+                        Text('0')
+                      ],
+                    ),
                   )
                 ]
               )
