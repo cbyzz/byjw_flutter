@@ -11,35 +11,42 @@ class Home extends StatefulWidget{
 
 class HomeState extends State<Home>{
   double axisY = 0;
+  double jumpAxisY = 0;
   double count = 0;
   double gravity = 0.15;
+  double vector = 0;
   bool action = false;
 
   void jump(){
-    count = 0;
-
     setState(() {
+      count = 0.05;
+      jumpAxisY = axisY;
+      gravity = vector/count;
+
+      axisY = double.parse((axisY - ((gravity * (count * count)))/2).toStringAsExponential(1));
+      /*
       axisY -= 0.2;
       axisY = double.parse(axisY.toStringAsExponential(1));
+      */
     });
+  }
 
-    if(!action){
-      action = true;
-      Timer.periodic(new Duration(milliseconds: 1000), (timer) {
-        count += 0.1;
-        setState((){
-          axisY = double.parse((axisY + ((gravity * (count * count)))/2).toStringAsExponential(1));
+  void start(){
+    count = 0;
 
-          if(axisY >= 1.0){
-            timer.cancel();
-          }else{
-            action = false;
-          }
-        });
+    action = true;
+    Timer.periodic(new Duration(milliseconds: 50), (timer) {
+      count += 0.05;
+      setState((){
+        axisY = double.parse((axisY + ((gravity * (count * count)))/2).toStringAsExponential(1));
+        vector = sqrt(2*gravity*axisY);
+
+        if(axisY >= 1.0){
+          timer.cancel();
+        }
       });
-    }
-
-
+    });
+    
   }
 
   @override
@@ -52,13 +59,18 @@ class HomeState extends State<Home>{
           Expanded(
             child: GestureDetector(
               child: AnimatedContainer(
-                duration: Duration(milliseconds: 500),
+                duration: Duration(milliseconds: 100),
                 alignment: Alignment(0, axisY),
                 color:Colors.green,
                 child: NaverIcon(),
               ),
               onTap: (){
-                jump();
+
+                if(!action){
+                  start();
+                }else{
+                  jump();
+                }
               },
             ),
             flex: 4,
