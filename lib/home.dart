@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'naver-icon.dart';
 import 'util.dart';
 
@@ -17,8 +19,17 @@ class HomeState extends State<Home>{
   double count = 0;
   double gravity = 0.15;
   double vector = 0;
-  double time = 1.3;
+  static double time = 1.6;
+  double time2 = time + 1.5;
   bool action = false;
+  int animDuration = 100;
+  int animDuration2 = 100;
+  double bottomHeight = 30;
+  double topHeight = 30;
+  double bottomHeight2 = 40;
+  double topHeight2 = 40;
+
+  int currentScore = 0;
 
   void jump(){
     // print(axisY);
@@ -37,6 +48,10 @@ class HomeState extends State<Home>{
     count = 0;
     Timer.periodic(new Duration(milliseconds: 50), (timer) {
       time -= 0.05;
+      time2 -= 0.05;
+
+      currentScore += 1;
+
       count += 0.025;
       setState((){
         // axisY = double.parse((axisY + ((gravity * (count * count)))/2).toStringAsExponential(1));
@@ -46,20 +61,85 @@ class HomeState extends State<Home>{
         axisY = jumpAxisY - vector;
 
         if(time <= -1.3){
-          time = 1;
+          time = 1.6;
+          animDuration = 0;
+          var min = 50;
+          var max = 250;
+          var rnd = new Random();
+          var r = min + rnd.nextInt(max - min);
+          bottomHeight = r.toDouble();
+          rnd = new Random();
+          r = min + rnd.nextInt(max - min);
+          topHeight = r.toDouble();
+        } else {
+          animDuration = 100;
+        }
+
+        if(time2 <= -1.3){
+          time2 = time + 1.5;
+          animDuration2 = 0;
+          var min = 50;
+          var max = 250;
+          var rnd = new Random();
+          var r = min + rnd.nextInt(max - min);
+          bottomHeight2 = r.toDouble();
+          rnd = new Random();
+          r = min + rnd.nextInt(max - min);
+          topHeight2 = r.toDouble();
+        } else {
+          animDuration2 = 100;
         }
 
         if(axisY >= 1.0){
-          vector = 0;
-          count = 0;
-          axisY = 0;
-          jumpAxisY = 0;
-          action = false;
           timer.cancel();
+          endGame();
         }
       });
     });
     
+  }
+
+  endGame(){
+    showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('You Die! Bitch!'),
+          content: Text("Your Score " + currentScore.toString()),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.pop(context, "OK");
+                setState((){
+                  vector = 0;
+                  count = 0;
+                  axisY = 0;
+                  jumpAxisY = 0;
+                  action = false;
+
+                  time = 1.6;
+                  time2 = time + 1.5;
+                  bottomHeight = 30;
+                  topHeight = 30;
+                  bottomHeight2 = 40;
+                  topHeight2 = 40;
+
+                  currentScore = 0;
+                });
+              },
+            ),
+            FlatButton(
+              child: Text('App Close'),
+              onPressed: () {
+                exit(0);
+              },
+            ),
+          ],
+        );
+      }
+    );
   }
 
   @override
@@ -89,20 +169,38 @@ class HomeState extends State<Home>{
                     child: NaverIcon(),
                   ),
                   AnimatedContainer(
-                    duration: Duration(milliseconds: 50),
+                    duration: Duration(milliseconds: animDuration),
                     alignment: Alignment(time, 1),
                     child: Container(
                       width:30,
-                      height:40,
+                      height:bottomHeight,
                       color: Colors.red,
                     ),
                   ),
                   AnimatedContainer(
-                    duration: Duration(milliseconds: 100),
-                    alignment: Alignment(0, -1),
+                    duration: Duration(milliseconds: animDuration),
+                    alignment: Alignment(time, -1),
                     child: Container(
                       width:30,
-                      height:getStatusBarHeight(context),
+                      height: topHeight,
+                      color: Colors.red,
+                    ),
+                  ),
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: animDuration2),
+                    alignment: Alignment(time2, 1),
+                    child: Container(
+                      width:50,
+                      height:bottomHeight2,
+                      color: Colors.black,
+                    ),
+                  ),
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: animDuration2),
+                    alignment: Alignment(time2, -1),
+                    child: Container(
+                      width:30,
+                      height: topHeight2,
                       color: Colors.red,
                     ),
                   )
@@ -132,7 +230,7 @@ class HomeState extends State<Home>{
                           Container(
                             padding: const EdgeInsets.only(top:20, right:30, left:30),
                             child: Text(
-                              '21812123121231231점',
+                              currentScore.toString() + ' 점',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               ),
