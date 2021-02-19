@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:byjw_flutter/hudle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'naver-icon.dart';
@@ -31,6 +32,8 @@ class HomeState extends State<Home>{
 
   int currentScore = 0;
 
+  List arr = <Widget>[];
+
   void jump(){
     // print(axisY);
     setState(() {
@@ -47,6 +50,13 @@ class HomeState extends State<Home>{
     action = true;
     count = 0;
     Timer.periodic(new Duration(milliseconds: 50), (timer) {
+      if(arr.length < 5 && (currentScore % 50) == 0){
+        arr.add(Hudle(level: 0, duration:animDuration, lastAxisX:0));
+      }else if(arr.length >= 5 && (currentScore % 50) == 0){
+        arr.removeAt(0);
+        arr.add(Hudle(level: 0, duration:animDuration, lastAxisX:0));
+      }
+
       time -= 0.05;
       time2 -= 0.05;
 
@@ -100,6 +110,7 @@ class HomeState extends State<Home>{
   }
 
   endGame(){
+    arr = <Widget>[];
     showDialog(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -168,6 +179,8 @@ class HomeState extends State<Home>{
                     color:Colors.green,
                     child: NaverIcon(),
                   ),
+                  ...arr,
+                  /*
                   AnimatedContainer(
                     duration: Duration(milliseconds: animDuration),
                     alignment: Alignment(time, 1),
@@ -204,6 +217,7 @@ class HomeState extends State<Home>{
                       color: Colors.red,
                     ),
                   )
+                  */
                 ]
               ),
               flex: 4,
