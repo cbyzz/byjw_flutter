@@ -20,36 +20,20 @@ class HudleState extends State<Hudle> {
   double axisX = 1.5;
   static bool ran = new Random().nextBool();
   double axisY = ran ? 1.0 : -1.0;
+  
+  
+  @override
+  void initState() {
+    super.initState();
 
-  void make(){
-
-    Timer.periodic(new Duration(milliseconds: 50), (timer) {
-      setState((){
-        axisX -= 0.02;
-      });
+   Timer.periodic(new Duration(milliseconds: 50), (timer) {
+      if(mounted) {
+        setState(() {
+          axisX -= 0.02;
+        });
+      }
     });
   }
-  
-  
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   if(!_disposed){
-  //    Timer.periodic(new Duration(milliseconds: 50), (timer) {
-  //       setState((){
-  //         axisX -= 0.02;
-  //       });
-  //     });
-  //   }
-  // }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   _disposed = true;
-  // }
-
   
   @override
   Widget build(BuildContext context) {
